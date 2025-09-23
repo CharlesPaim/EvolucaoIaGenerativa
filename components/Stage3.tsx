@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 import { StageContainer } from './common/StageContainer';
 import { Stage3State, FormField } from '../types';
@@ -8,6 +7,7 @@ interface Stage3Props {
     state: Stage3State;
     onFormChange: (formState: Record<string, string>) => void;
     onExecute: () => void;
+    onComplete: () => void;
     isLoading: boolean;
 }
 
@@ -36,8 +36,8 @@ const renderField = (field: FormField, value: string, onChange: (name: string, v
     }
 };
 
-const Stage3: React.FC<Stage3Props> = ({ state, onFormChange, onExecute, isLoading }) => {
-    const { appData, formState, response } = state;
+const Stage3: React.FC<Stage3Props> = ({ state, onFormChange, onExecute, isLoading, onComplete }) => {
+    const { appData, formState, response, isComplete } = state;
     const responseEndRef = useRef<HTMLDivElement>(null);
 
      useEffect(() => {
@@ -94,7 +94,7 @@ const Stage3: React.FC<Stage3Props> = ({ state, onFormChange, onExecute, isLoadi
                 {/* Response Panel */}
                 <div className="flex flex-col bg-gray-800/50 border border-cyan-700/30 rounded-lg shadow-2xl shadow-cyan-900/20">
                      <div className="flex-1 p-6 overflow-y-auto custom-scrollbar min-h-[400px]">
-                        {isLoading && (
+                        {isLoading && !response && (
                             <div className="flex flex-col items-center justify-center h-full">
                                 <LoadingSpinner />
                                 <p className="text-cyan-300 mt-2">Executando...</p>
@@ -103,6 +103,13 @@ const Stage3: React.FC<Stage3Props> = ({ state, onFormChange, onExecute, isLoadi
                         {!isLoading && !response && <p className="text-gray-500 text-center my-auto">O resultado do aplicativo aparecerá aqui.</p>}
                         {response && (
                              <div className="prose prose-invert max-w-none text-gray-200 whitespace-pre-wrap">{response}</div>
+                        )}
+                        {isComplete && !isLoading && (
+                            <div className="mt-4 text-center">
+                                <button onClick={onComplete} className="bg-blue-600 text-white font-bold py-2 px-8 rounded-md hover:bg-blue-500 transition duration-200 animate-fade-in">
+                                    Continuar para o Estágio 4 &rarr;
+                                </button>
+                            </div>
                         )}
                         <div ref={responseEndRef} />
                     </div>

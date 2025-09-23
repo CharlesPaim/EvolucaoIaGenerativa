@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect } from 'react';
 import { StageContainer } from './common/StageContainer';
 import { Stage1State } from '../types';
@@ -23,6 +22,16 @@ const Stage1: React.FC<Stage1Props> = ({ state, onPromptChange, onExecute, onCom
         e.preventDefault();
         onExecute();
     };
+
+    const handleExampleClick = (examplePrompt: string) => {
+        onPromptChange(examplePrompt);
+    };
+
+    const examplePrompts = [
+        "Crie um poema sobre a chuva",
+        "Resuma o conceito de buracos negros",
+        "Sugira 3 nomes para uma cafeteria"
+    ];
     
     return (
         <StageContainer
@@ -63,6 +72,23 @@ const Stage1: React.FC<Stage1Props> = ({ state, onPromptChange, onExecute, onCom
                             )}
                         </button>
                     </form>
+
+                    <div className="mt-3 text-center">
+                        <div className="flex flex-wrap gap-2 justify-center items-center">
+                             <span className="text-xs text-gray-500 mr-2">Ou tente:</span>
+                            {examplePrompts.map((example) => (
+                                <button
+                                    key={example}
+                                    onClick={() => handleExampleClick(example)}
+                                    disabled={isLoading}
+                                    className="text-xs bg-gray-700/50 border border-gray-600 text-gray-400 px-3 py-1 rounded-full hover:bg-gray-700 hover:border-cyan-600 hover:text-cyan-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    {example}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
                     {isComplete && (
                         <div className="mt-4 text-center">
                             <button onClick={onComplete} className="bg-blue-600 text-white font-bold py-2 px-8 rounded-md hover:bg-blue-500 transition duration-200 animate-fade-in">

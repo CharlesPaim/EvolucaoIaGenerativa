@@ -1,5 +1,4 @@
-
-export type Stage = 'stage1' | 'stage2' | 'stage3';
+export type Stage = 'stage1' | 'stage2' | 'stage3' | 'stage4';
 
 export interface StageInfo {
   id: Stage;
@@ -61,4 +60,5 @@ export interface JourneyState {
     stage1: Stage1State;
     stage2?: Stage2State;
     stage3?: Stage3State;
+    metaPrompt?: string;
 }

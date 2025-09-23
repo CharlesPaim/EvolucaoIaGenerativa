@@ -1,22 +1,24 @@
-
 import React, { useState } from 'react';
 import Header from './components/Header';
 import Stage1 from './components/Stage1';
 import Stage2 from './components/Stage2';
 import Stage3 from './components/Stage3';
-import { Stage, JourneyState, Stage2TemplateData } from './types';
+import Stage4 from './components/Stage4';
+import { Stage, JourneyState } from './types';
 import { analyzePromptForStage2, generateAppInterfaceForStage3, streamChatCompletion } from './services/geminiService';
-import { LoadingSpinner } from './components/common/LoadingSpinner';
+import { TransitionScreen } from './components/common/TransitionScreen';
 
 const App: React.FC = () => {
   const [currentStage, setCurrentStage] = useState<Stage>('stage1');
   const [unlockedStages, setUnlockedStages] = useState<Stage[]>(['stage1']);
   const [journeyState, setJourneyState] = useState<JourneyState>({
     stage1: { prompt: '', response: '', isComplete: false },
+    metaPrompt: '',
   });
   const [isLoading, setIsLoading] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [transitionMessage, setTransitionMessage] = useState('');
+  const [transitionInfo, setTransitionInfo] = useState({ title: '', message: '' });
+
 
   // --- Restart Handler ---
   const handleRestart = () => {
@@ -24,10 +26,11 @@ const App: React.FC = () => {
     setUnlockedStages(['stage1']);
     setJourneyState({
         stage1: { prompt: '', response: '', isComplete: false },
+        metaPrompt: '',
     });
     setIsLoading(false);
     setIsTransitioning(false);
-    setTransitionMessage('');
+    setTransitionInfo({ title: '', message: '' });
   };
 
   // --- Stage 1 Handlers ---
@@ -53,8 +56,23 @@ const App: React.FC = () => {
   };
 
   const handleStage1Complete = async () => {
+    const promptToIA = `Analise a seguinte solicitação do usuário. Sua tarefa é transformá-la em um "template de prompt" reutilizável, identificando a parte central da instrução (o template) e a parte que pode ser alterada (a variável). Responda no mesmo idioma da solicitação do usuário.
+
+- promptTemplate: A instrução principal com um placeholder para a parte variável. O placeholder deve estar entre chaves, ex: "{tema}".
+- variableName: Um nome em camelCase para a variável (ex: "temaDoPoema").
+- variableLabel: Uma etiqueta amigável para o campo de entrada da variável (ex: "Tema do Poema").
+- initialValue: O valor original da variável extraído da solicitação.
+
+Solicitação do usuário: "${journeyState.stage1.prompt}"`;
+    
+    setJourneyState(prev => ({ ...prev, metaPrompt: promptToIA }));
+    
+    setTransitionInfo({
+        title: 'Analisando seu prompt...',
+        message: 'Para transformar sua pergunta em um template, nós não enviamos apenas a sua pergunta para a IA. Nós a envolvemos em uma instrução mais complexa, como esta:',
+    });
     setIsTransitioning(true);
-    setTransitionMessage('Analisando seu prompt para o Estágio 2...');
+    
     try {
       const stage2Data = await analyzePromptForStage2(journeyState.stage1.prompt);
       const generatedPrompt = stage2Data.promptTemplate.replace(`{${stage2Data.variableName}}`, stage2Data.initialValue);
@@ -108,8 +126,24 @@ const App: React.FC = () => {
 
   const handleStage2Complete = async () => {
     if (!journeyState.stage2?.generatedPrompt) return;
+    
+    const promptToIA = `Analise o seguinte prompt estruturado de um usuário. Sua tarefa é projetar uma interface de mini-aplicativo simples para atender à solicitação. Descreva esta interface como um objeto JSON. Responda no mesmo idioma do prompt.
+- appName: Um nome curto e descritivo para o aplicativo (ex: "Gerador de Receitas", "Criador de Poemas").
+- appDescription: Uma frase descrevendo o que o aplicativo faz.
+- fields: Uma matriz de objetos de campo de formulário. Extraia os parâmetros variáveis do prompt para criar esses campos. Cada campo deve ter 'name' (em camelCase, ex: 'mainIngredient'), 'label' (ex: 'Ingrediente Principal'), 'type' ('text', 'textarea', ou 'select'), e opcionalmente 'placeholder', 'options', ou 'defaultValue' (um valor inicial extraído diretamente do prompt).
+- buttonText: O texto para o botão de envio (ex: "Gerar Receita", "Criar Poema").
+- promptTemplate: Um modelo de string para reconstruir o prompt original usando os nomes dos campos do formulário. Use chaves para os placeholders, ex: "Crie uma receita de {cuisine} com {mainIngredient} de dificuldade {difficulty}".
+
+Prompt Estruturado: "${journeyState.stage2.generatedPrompt}"`;
+
+    setJourneyState(prev => ({ ...prev, metaPrompt: promptToIA }));
+
+    setTransitionInfo({
+        title: 'Gerando interface do aplicativo...',
+        message: 'A IA está projetando uma interface de usuário com base no seu prompt estruturado do Estágio 2.',
+    });
     setIsTransitioning(true);
-    setTransitionMessage('Gerando interface do aplicativo para o Estágio 3...');
+    
     try {
       const appData = await generateAppInterfaceForStage3(journeyState.stage2.generatedPrompt);
       
@@ -161,14 +195,18 @@ const App: React.FC = () => {
     }
   };
 
+  const handleStage3Complete = () => {
+    setUnlockedStages(prev => [...new Set([...prev, 'stage4'])]);
+    setCurrentStage('stage4');
+  };
+
   const renderStage = () => {
     if (isTransitioning) {
-        return (
-            <div className="flex flex-col items-center justify-center h-[500px]">
-                <LoadingSpinner />
-                <p className="mt-4 text-cyan-300">{transitionMessage}</p>
-            </div>
-        );
+        return <TransitionScreen 
+            title={transitionInfo.title}
+            message={transitionInfo.message}
+            promptToIA={journeyState.metaPrompt || ''}
+        />;
     }
 
     switch (currentStage) {
@@ -177,7 +215,9 @@ const App: React.FC = () => {
       case 'stage2':
         return journeyState.stage2 ? <Stage2 state={journeyState.stage2} onVariableChange={handleStage2VariableChange} onExecute={handleStage2Execute} onComplete={handleStage2Complete} isLoading={isLoading} /> : null;
       case 'stage3':
-        return journeyState.stage3 ? <Stage3 state={journeyState.stage3} onFormChange={handleStage3FormChange} onExecute={handleStage3Execute} isLoading={isLoading} /> : null;
+        return journeyState.stage3 ? <Stage3 state={journeyState.stage3} onFormChange={handleStage3FormChange} onExecute={handleStage3Execute} onComplete={handleStage3Complete} isLoading={isLoading} /> : null;
+      case 'stage4':
+        return <Stage4 onRestart={handleRestart} />;
       default:
         return <Stage1 state={journeyState.stage1} onPromptChange={handleStage1PromptChange} onExecute={handleStage1Execute} onComplete={handleStage1Complete} isLoading={isLoading} />;
     }

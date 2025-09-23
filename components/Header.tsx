@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { Stage, StageInfo } from '../types';
-import { QuestionMarkIcon, BoxIcon, AppIcon, LockIcon, RestartIcon } from './icons/Icons';
+import { QuestionMarkIcon, BoxIcon, AppIcon, LockIcon, RestartIcon, FutureIcon } from './icons/Icons';
 
 interface HeaderProps {
   currentStage: Stage;
@@ -14,6 +13,7 @@ const stages: StageInfo[] = [
   { id: 'stage1', title: '1. O Início: Fazendo Perguntas', description: 'Interação direta e simples com a IA.' },
   { id: 'stage2', title: '2. Empacotando Prompts', description: 'Estruturando instruções para tarefas complexas.' },
   { id: 'stage3', title: '3. Materializando em Apps', description: 'Integrando a IA de forma invisível em aplicações.' },
+  { id: 'stage4', title: '4. O Futuro: Agentes', description: 'O próximo passo: IAs como agentes autônomos.' },
 ];
 
 const Header: React.FC<HeaderProps> = ({ currentStage, setCurrentStage, unlockedStages, onRestart }) => {
@@ -23,6 +23,7 @@ const Header: React.FC<HeaderProps> = ({ currentStage, setCurrentStage, unlocked
       case 'stage1': return <QuestionMarkIcon className="w-6 h-6 mr-3" />;
       case 'stage2': return <BoxIcon className="w-6 h-6 mr-3" />;
       case 'stage3': return <AppIcon className="w-6 h-6 mr-3" />;
+      case 'stage4': return <FutureIcon className="w-6 h-6 mr-3" />;
     }
   };
 
