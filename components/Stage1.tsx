@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { StageContainer } from './common/StageContainer';
 import { Stage1State } from '../types';
 
@@ -10,9 +10,29 @@ interface Stage1Props {
     isLoading: boolean;
 }
 
+const allPossiblePrompts = [
+    "Crie um poema sobre a chuva",
+    "Resuma o conceito de buracos negros em termos simples",
+    "Sugira 3 nomes para uma cafeteria com tema de gatos",
+    "Escreva um roteiro curto para um comercial de carro voador",
+    "Qual a receita de um bolo de chocolate vegano?",
+    "Crie um plano de treino de 3 dias para iniciantes",
+    "Descreva uma cidade futurista subaquática",
+    "Gere uma lista de tópicos para um blog de viagens",
+    "Escreva um e-mail formal pedindo um dia de folga",
+    "Invente um super-herói cujo poder seja a jardinagem"
+];
+
 const Stage1: React.FC<Stage1Props> = ({ state, onPromptChange, onExecute, onComplete, isLoading }) => {
     const { prompt, response, isComplete } = state;
     const responseEndRef = useRef<HTMLDivElement>(null);
+    const [examplePrompts, setExamplePrompts] = useState<string[]>([]);
+
+    useEffect(() => {
+        // Shuffle the array and pick the first 3
+        const shuffled = [...allPossiblePrompts].sort(() => 0.5 - Math.random());
+        setExamplePrompts(shuffled.slice(0, 3));
+    }, []); // Empty dependency array ensures this runs only once on mount
 
     useEffect(() => {
         responseEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -26,12 +46,6 @@ const Stage1: React.FC<Stage1Props> = ({ state, onPromptChange, onExecute, onCom
     const handleExampleClick = (examplePrompt: string) => {
         onPromptChange(examplePrompt);
     };
-
-    const examplePrompts = [
-        "Crie um poema sobre a chuva",
-        "Resuma o conceito de buracos negros",
-        "Sugira 3 nomes para uma cafeteria"
-    ];
     
     return (
         <StageContainer

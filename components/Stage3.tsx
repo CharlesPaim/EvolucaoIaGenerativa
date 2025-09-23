@@ -92,8 +92,8 @@ const Stage3: React.FC<Stage3Props> = ({ state, onFormChange, onExecute, isLoadi
                 </div>
 
                 {/* Response Panel */}
-                <div className="flex flex-col bg-gray-800/50 border border-cyan-700/30 rounded-lg shadow-2xl shadow-cyan-900/20">
-                     <div className="flex-1 p-6 overflow-y-auto custom-scrollbar min-h-[400px]">
+                <div className="flex flex-col bg-gray-800/50 border border-cyan-700/30 rounded-lg shadow-2xl shadow-cyan-900/20 min-h-[400px]">
+                     <div className="flex-1 p-6 overflow-y-auto custom-scrollbar min-h-0">
                         {isLoading && !response && (
                             <div className="flex flex-col items-center justify-center h-full">
                                 <LoadingSpinner />
