@@ -1,4 +1,5 @@
 
+
 import React, { useRef, useEffect } from 'react';
 import { StageContainer } from './common/StageContainer';
 import { Stage2State } from '../types';
@@ -69,17 +70,17 @@ const Stage2: React.FC<Stage2Props> = ({ state, onVariableChange, onExecute, onC
                        {response && <div className="prose prose-invert max-w-none text-gray-200 whitespace-pre-wrap">{response}</div>}
                        {!response && !isLoading && <p className="text-gray-500">A resposta da IA aparecerá aqui.</p>}
                        {isLoading && !response && <div className="flex items-center justify-center h-full"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400"></div></div>}
-                       {isComplete && (
-                            <div className="mt-4 text-center">
-                                <button onClick={onComplete} className="bg-blue-600 text-white font-bold py-2 px-8 rounded-md hover:bg-blue-500 transition duration-200 animate-fade-in">
-                                    Continuar para o Estágio 3 &rarr;
-                                </button>
-                            </div>
-                        )}
                        <div ref={responseEndRef} />
                     </div>
                 </div>
             </div>
+            {isComplete && (
+                <div className="mt-8 text-center">
+                    <button onClick={onComplete} className="bg-blue-600 text-white font-bold py-2 px-8 rounded-md hover:bg-blue-500 transition duration-200 animate-fade-in">
+                        Continuar para o Estágio 3 &rarr;
+                    </button>
+                </div>
+            )}
         </StageContainer>
     );
 };

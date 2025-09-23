@@ -104,15 +104,15 @@ const Stage3: React.FC<Stage3Props> = ({ state, onFormChange, onExecute, isLoadi
                         {response && (
                              <div className="prose prose-invert max-w-none text-gray-200 whitespace-pre-wrap">{response}</div>
                         )}
-                        {isComplete && !isLoading && (
-                            <div className="mt-4 text-center">
-                                <button onClick={onComplete} className="bg-blue-600 text-white font-bold py-2 px-8 rounded-md hover:bg-blue-500 transition duration-200 animate-fade-in">
-                                    Continuar para o Estágio 4 &rarr;
-                                </button>
-                            </div>
-                        )}
                         <div ref={responseEndRef} />
                     </div>
+                    {isComplete && !isLoading && (
+                        <div className="p-4 border-t border-cyan-700/30 text-center">
+                            <button onClick={onComplete} className="bg-blue-600 text-white font-bold py-2 px-8 rounded-md hover:bg-blue-500 transition duration-200 animate-fade-in">
+                                Continuar para o Estágio 4 &rarr;
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
         </StageContainer>

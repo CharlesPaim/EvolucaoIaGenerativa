@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Header from './components/Header';
 import Stage1 from './components/Stage1';
@@ -151,6 +152,24 @@ Prompt Estruturado: "${journeyState.stage2.generatedPrompt}"`;
       appData.fields.forEach(field => {
         initialFormState[field.name] = field.defaultValue || '';
       });
+
+      // PATCH: The AI model may not consistently extract default values for all
+      // fields. This logic uses the known variable from Stage 2 to fill in a
+      // likely candidate field in Stage 3 if it was left empty.
+      if (journeyState.stage2) {
+        const stage2VarValue = journeyState.stage2.variableValue;
+        const emptyTextFields = appData.fields.filter(f =>
+          (f.type === 'textarea' || f.type === 'text') && !initialFormState[f.name]
+        );
+
+        if (emptyTextFields.length === 1) {
+          const fieldToPatch = emptyTextFields[0];
+          const isValueAlreadyPresent = Object.values(initialFormState).includes(stage2VarValue);
+          if (!isValueAlreadyPresent) {
+            initialFormState[fieldToPatch.name] = stage2VarValue;
+          }
+        }
+      }
 
       setJourneyState(prev => ({
         ...prev,
