@@ -6,6 +6,8 @@ import ReactFlow, {
   Edge,
   Position,
   MarkerType,
+  useReactFlow,
+  ReactFlowProvider,
 } from 'reactflow';
 
 const nodeDefaults = {
@@ -55,7 +57,7 @@ const allNodes: Record<string, Node> = {
     data: { label: '✅ Plano Concluído' },
     position: { x: 250, y: 360 },
     ...nodeDefaults,
-    sourcePosition: Position.Bottom, // Keep for consistency, though unused on output
+    sourcePosition: Position.Bottom,
   },
 };
 
@@ -64,35 +66,41 @@ const allEdges: Record<string, Edge> = {
   e2: { id: 'e-orchestrator-researcher', source: 'orchestrator', target: 'researcher', animated: true, markerEnd: { type: MarkerType.ArrowClosed } },
   e3: { id: 'e-orchestrator-analyzer', source: 'orchestrator', target: 'analyzer', animated: true, markerEnd: { type: MarkerType.ArrowClosed } },
   e4: { id: 'e-orchestrator-synthesizer', source: 'orchestrator', target: 'synthesizer', animated: true, markerEnd: { type: MarkerType.ArrowClosed } },
-  e5: { id: 'e-specialists-result', source: 'orchestrator', target: 'result', type: 'smoothstep', animated: true, markerEnd: { type: MarkerType.ArrowClosed } },
+  e5: { id: 'e-analyzer-result', source: 'analyzer', target: 'result', type: 'smoothstep', animated: true, markerEnd: { type: MarkerType.ArrowClosed } },
 };
 
 const proOptions = { hideAttribution: true };
 
-const AgentOrchestrationAnimation: React.FC = () => {
+const Flow: React.FC = () => {
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
+  const { fitView } = useReactFlow();
 
   useEffect(() => {
-    // Start with the goal
+    // This effect ensures the view is adjusted whenever nodes change
+    if (nodes.length > 0) {
+      // Adding a short delay and duration makes the transition smoother
+      const timer = setTimeout(() => fitView({ duration: 800, padding: 0.1 }), 50);
+      return () => clearTimeout(timer);
+    }
+  }, [nodes, fitView]);
+
+  useEffect(() => {
     setNodes([allNodes.goal]);
 
-    // 1 second later: add orchestrator
     const timer1 = setTimeout(() => {
       setNodes((nds) => [...nds, allNodes.orchestrator]);
       setEdges((eds) => [...eds, allEdges.e1]);
     }, 1000);
 
-    // 2 seconds later: add specialist agents
     const timer2 = setTimeout(() => {
       setNodes((nds) => [...nds, allNodes.researcher, allNodes.analyzer, allNodes.synthesizer]);
-      setEdges((eds) => [...eds, allEdges.e2, allEdges.e3, allEdges.e4]);
+      setEdges((eds) => [allEdges.e1, allEdges.e2, allEdges.e3, allEdges.e4]);
     }, 2000);
 
-    // 4 seconds later: add final result
     const timer3 = setTimeout(() => {
       setNodes((nds) => [...nds, allNodes.result]);
-      setEdges((eds) => [...eds, allEdges.e5]);
+      setEdges((eds) => [allEdges.e1, allEdges.e2, allEdges.e3, allEdges.e4, allEdges.e5]);
     }, 4000);
 
     return () => {
@@ -103,24 +111,31 @@ const AgentOrchestrationAnimation: React.FC = () => {
   }, []);
 
   return (
+    <ReactFlow
+      nodes={nodes}
+      edges={edges}
+      proOptions={proOptions}
+      nodesDraggable={false}
+      nodesConnectable={false}
+      panOnDrag={false}
+      zoomOnScroll={false}
+      zoomOnPinch={false}
+      zoomOnDoubleClick={false}
+      elementsSelectable={false}
+      fitView
+    >
+      <Background />
+      <Controls />
+    </ReactFlow>
+  );
+};
+
+const AgentOrchestrationAnimation: React.FC = () => {
+  return (
     <div style={{ height: '400px' }} className="bg-gray-900 border border-cyan-700/30 rounded-lg my-6">
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        proOptions={proOptions}
-        fitView
-        fitViewOptions={{ padding: 0.1 }}
-        nodesDraggable={false}
-        nodesConnectable={false}
-        panOnDrag={false}
-        zoomOnScroll={false}
-        zoomOnPinch={false}
-        zoomOnDoubleClick={false}
-        elementsSelectable={false}
-      >
-        <Background />
-        <Controls />
-      </ReactFlow>
+      <ReactFlowProvider>
+        <Flow />
+      </ReactFlowProvider>
     </div>
   );
 };

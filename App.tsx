@@ -215,7 +215,9 @@ Prompt Estruturado: "${journeyState.stage2.generatedPrompt}"`;
   };
 
   const handleStage3Complete = () => {
-    setUnlockedStages(prev => [...new Set([...prev, 'stage4'])]);
+    // FIX: Explicitly provide the type argument to `new Set()` to ensure TypeScript
+    // correctly infers the resulting array as `Stage[]` instead of `string[]`.
+    setUnlockedStages(prev => [...new Set<Stage>([...prev, 'stage4'])]);
     setCurrentStage('stage4');
   };
 
