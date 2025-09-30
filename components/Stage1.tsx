@@ -1,7 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { StageContainer } from './common/StageContainer';
 import { Stage1State } from '../types';
-import { LoadingSpinner } from './common/LoadingSpinner';
 
 interface Stage1Props {
     state: Stage1State;
@@ -105,7 +104,7 @@ const Stage1: React.FC<Stage1Props> = ({ state, onPromptChange, onExecute, onCom
                     )}
                      {isLoading && !response && (
                         <div className="flex items-center justify-center h-full">
-                            <LoadingSpinner />
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400"></div>
                         </div>
                     )}
                     <div ref={responseEndRef} />
@@ -118,12 +117,12 @@ const Stage1: React.FC<Stage1Props> = ({ state, onPromptChange, onExecute, onCom
                             onChange={(e) => onPromptChange(e.target.value)}
                             placeholder="Peça algo... Ex: 'uma receita de lasanha' ou 'um poema sobre a lua'"
                             disabled={isLoading}
-                            className="flex-1 bg-gray-700/50 border border-gray-600 rounded-md px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all duration-300"
+                            className="flex-1 bg-gray-700/50 border border-gray-600 rounded-md px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition duration-200"
                         />
                         <button
                             type="submit"
                             disabled={isLoading || !prompt}
-                            className="bg-cyan-600 text-white font-bold py-2 px-6 rounded-md hover:bg-cyan-500 disabled:bg-gray-600 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center"
+                            className="bg-cyan-600 text-white font-bold py-2 px-6 rounded-md hover:bg-cyan-500 disabled:bg-gray-600 disabled:cursor-not-allowed transition duration-200 flex items-center justify-center"
                         >
                             {isLoading ? (
                                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
@@ -141,7 +140,7 @@ const Stage1: React.FC<Stage1Props> = ({ state, onPromptChange, onExecute, onCom
                                     key={example}
                                     onClick={() => handleExampleClick(example)}
                                     disabled={isLoading}
-                                    className="text-xs bg-gray-700/50 border border-gray-600 text-gray-400 px-3 py-1 rounded-full hover:bg-gray-700 hover:border-cyan-600 hover:text-cyan-400 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="text-xs bg-gray-700/50 border border-gray-600 text-gray-400 px-3 py-1 rounded-full hover:bg-gray-700 hover:border-cyan-600 hover:text-cyan-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {example}
                                 </button>
@@ -151,7 +150,7 @@ const Stage1: React.FC<Stage1Props> = ({ state, onPromptChange, onExecute, onCom
 
                     {isComplete && (
                         <div className="mt-4 text-center">
-                            <button onClick={onComplete} className="bg-blue-600 text-white font-bold py-2 px-8 rounded-md hover:bg-blue-500 transition-all duration-300 animate-fade-in">
+                            <button onClick={onComplete} className="bg-blue-600 text-white font-bold py-2 px-8 rounded-md hover:bg-blue-500 transition duration-200 animate-fade-in">
                                 Continuar para o Estágio 2 &rarr;
                             </button>
                         </div>

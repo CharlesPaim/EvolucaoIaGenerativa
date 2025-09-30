@@ -31,14 +31,14 @@ const Header: React.FC<HeaderProps> = ({ currentStage, setCurrentStage, unlocked
     <header className="text-center relative">
        <button
         onClick={onRestart}
-        className="absolute top-0 right-0 mt-1 mr-1 text-xs text-gray-400 hover:text-white transition-all duration-300 flex items-center gap-1 bg-gray-800/50 px-2 py-1 rounded-md border border-gray-700 hover:border-cyan-500 z-10"
+        className="absolute top-0 right-0 mt-1 mr-1 text-xs text-gray-400 hover:text-white transition-colors flex items-center gap-1 bg-gray-800/50 px-2 py-1 rounded-md border border-gray-700 hover:border-cyan-500 z-10"
         aria-label="Recomeçar a jornada"
         title="Recomeçar a jornada"
       >
         <RestartIcon className="w-4 h-4" />
         <span>Recomeçar</span>
       </button>
-      <h1 className="text-5xl md:text-6xl font-bold text-cyan-400">Evolução da IA Generativa</h1>
+      <h1 className="text-5xl md:text-6xl font-bold text-cyan-300">Evolução da IA Generativa</h1>
       <p className="mt-4 text-lg text-gray-300 max-w-2xl mx-auto">
         Uma jornada interativa mostrando como nossa forma de interagir com IAs mudou desde 2022.
       </p>
@@ -52,7 +52,7 @@ const Header: React.FC<HeaderProps> = ({ currentStage, setCurrentStage, unlocked
               disabled={!isUnlocked}
               className={`w-full sm:w-auto flex-1 flex items-center text-left p-3 rounded-lg transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-75 ${
                 currentStage === stage.id
-                  ? 'bg-cyan-500/20 text-white shadow-lg border border-cyan-500/50 animate-pulse-border'
+                  ? 'bg-cyan-500/20 text-white shadow-lg border border-cyan-500/50'
                   : isUnlocked
                   ? 'text-gray-400 hover:bg-gray-700/50 hover:text-white'
                   : 'text-gray-600 bg-gray-800/50 cursor-not-allowed'

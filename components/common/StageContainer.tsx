@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 interface StageContainerProps {
@@ -9,7 +10,7 @@ interface StageContainerProps {
 export const StageContainer: React.FC<StageContainerProps> = ({ title, description, children }) => {
   return (
     <div className="bg-gray-800/30 p-6 sm:p-8 rounded-xl border border-gray-700 shadow-xl animate-fade-in">
-      <h2 className="text-3xl sm:text-4xl font-bold text-cyan-400">{title}</h2>
+      <h2 className="text-3xl sm:text-4xl font-bold text-cyan-300">{title}</h2>
       <p className="mt-2 mb-6 text-gray-400 max-w-3xl">{description}</p>
       <div>{children}</div>
     </div>

@@ -1,10 +1,11 @@
+
 import React, { useState } from 'react';
 import Header from './components/Header';
 import Stage1 from './components/Stage1';
 import Stage2 from './components/Stage2';
 import Stage3 from './components/Stage3';
 import Stage4 from './components/Stage4';
-import { Stage, JourneyState } from './types';
+import { Stage, JourneyState, Stage3State } from './types';
 import { analyzePromptForStage2, generateAppInterfaceForStage3, streamChatCompletion } from './services/geminiService';
 import { TransitionScreen } from './components/common/TransitionScreen';
 
@@ -19,6 +20,18 @@ const App: React.FC = () => {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [transitionInfo, setTransitionInfo] = useState({ title: '', message: '' });
 
+
+  // --- Helper to get final prompt for visualization ---
+  const getStage3FinalPrompt = (stage3State: Stage3State | undefined): string | undefined => {
+    if (!stage3State?.appData) return undefined;
+    const { appData, formState } = stage3State;
+
+    let finalPrompt = appData.promptTemplate;
+    for (const key in formState) {
+        finalPrompt = finalPrompt.replace(`{${key}}`, formState[key] || `...`);
+    }
+    return finalPrompt;
+  };
 
   // --- Restart Handler ---
   const handleRestart = () => {
@@ -233,9 +246,28 @@ Prompt Estruturado: "${journeyState.stage2.generatedPrompt}"`;
       case 'stage1':
         return <Stage1 state={journeyState.stage1} onPromptChange={handleStage1PromptChange} onExecute={handleStage1Execute} onComplete={handleStage1Complete} isLoading={isLoading} />;
       case 'stage2':
-        return journeyState.stage2 ? <Stage2 state={journeyState.stage2} onVariableChange={handleStage2VariableChange} onExecute={handleStage2Execute} onComplete={handleStage2Complete} isLoading={isLoading} /> : null;
+        return journeyState.stage2 ? <Stage2 
+            state={journeyState.stage2} 
+            onVariableChange={handleStage2VariableChange} 
+            onExecute={handleStage2Execute} 
+            onComplete={handleStage2Complete} 
+            isLoading={isLoading} 
+            stage1Prompt={journeyState.stage1.prompt}
+            currentStage={currentStage}
+        /> : null;
       case 'stage3':
-        return journeyState.stage3 ? <Stage3 state={journeyState.stage3} onFormChange={handleStage3FormChange} onExecute={handleStage3Execute} onComplete={handleStage3Complete} isLoading={isLoading} /> : null;
+        const stage3FinalPrompt = getStage3FinalPrompt(journeyState.stage3);
+        return journeyState.stage3 ? <Stage3 
+            state={journeyState.stage3} 
+            onFormChange={handleStage3FormChange} 
+            onExecute={handleStage3Execute} 
+            onComplete={handleStage3Complete} 
+            isLoading={isLoading} 
+            stage1Prompt={journeyState.stage1.prompt}
+            stage2Prompt={journeyState.stage2?.generatedPrompt}
+            stage3FinalPrompt={stage3FinalPrompt}
+            currentStage={currentStage}
+        /> : null;
       case 'stage4':
         return <Stage4 onRestart={handleRestart} />;
       default:
@@ -244,7 +276,7 @@ Prompt Estruturado: "${journeyState.stage2.generatedPrompt}"`;
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100 flex flex-col items-center p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col items-center p-4 sm:p-6 lg:p-8">
       <div className="w-full max-w-6xl mx-auto">
         <Header 
           currentStage={currentStage} 
