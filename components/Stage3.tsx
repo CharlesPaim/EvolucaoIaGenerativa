@@ -76,16 +76,16 @@ const Stage3: React.FC<Stage3Props> = ({ state, onFormChange, onExecute, isLoadi
             <div className="grid md:grid-cols-2 gap-8">
                 {/* App Panel */}
                 <div className="p-6 bg-gray-800/50 border border-cyan-700/30 rounded-lg shadow-2xl shadow-cyan-900/20">
-                    <h3 className="text-2xl font-bold text-center text-cyan-300 mb-1">{appData.appName}</h3>
+                    <h3 className="text-2xl font-bold text-center text-cyan-400 mb-1">{appData.appName}</h3>
                     <p className="text-center text-gray-400 mb-6">{appData.appDescription}</p>
                     <form onSubmit={handleSubmit} className="space-y-4">
                         {appData.fields.map(field => (
                             <div key={field.name}>
-                                <label htmlFor={field.name} className="block text-sm font-medium text-cyan-300">{field.label}</label>
+                                <label htmlFor={field.name} className="block text-sm font-medium text-cyan-400">{field.label}</label>
                                 {renderField(field, formState[field.name], handleFieldChange)}
                             </div>
                         ))}
-                        <button type="submit" disabled={isButtonDisabled} className="w-full bg-cyan-600 text-white font-bold py-2 px-4 rounded-md hover:bg-cyan-500 disabled:bg-gray-600 transition duration-200">
+                        <button type="submit" disabled={isButtonDisabled} className="w-full bg-cyan-600 text-white font-bold py-2 px-4 rounded-md hover:bg-cyan-500 disabled:bg-gray-600 transition-all duration-300">
                             {isLoading ? 'Gerando...' : appData.buttonText}
                         </button>
                     </form>
@@ -97,7 +97,7 @@ const Stage3: React.FC<Stage3Props> = ({ state, onFormChange, onExecute, isLoadi
                         {isLoading && !response && (
                             <div className="flex flex-col items-center justify-center h-full">
                                 <LoadingSpinner />
-                                <p className="text-cyan-300 mt-2">Executando...</p>
+                                <p className="text-cyan-400 mt-2">Executando...</p>
                             </div>
                         )}
                         {!isLoading && !response && <p className="text-gray-500 text-center my-auto">O resultado do aplicativo aparecerá aqui.</p>}
@@ -108,7 +108,7 @@ const Stage3: React.FC<Stage3Props> = ({ state, onFormChange, onExecute, isLoadi
                     </div>
                     {isComplete && !isLoading && (
                         <div className="p-4 border-t border-cyan-700/30 text-center">
-                            <button onClick={onComplete} className="bg-blue-600 text-white font-bold py-2 px-8 rounded-md hover:bg-blue-500 transition duration-200 animate-fade-in">
+                            <button onClick={onComplete} className="bg-blue-600 text-white font-bold py-2 px-8 rounded-md hover:bg-blue-500 transition-all duration-300 animate-fade-in">
                                 Continuar para o Estágio 4 &rarr;
                             </button>
                         </div>

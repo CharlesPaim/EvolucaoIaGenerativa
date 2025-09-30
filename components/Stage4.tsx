@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { StageContainer } from './common/StageContainer';
 import { SpecialistTask, AgentIconType } from '../types';
@@ -36,7 +35,7 @@ const SpecialistAgentCard: React.FC<{ task: SpecialistTask; isComplete: boolean;
             </div>
             {isComplete && (
                 <div className="bg-gray-900/50 p-3 rounded-md border border-gray-700 animate-fade-in">
-                    <p className="text-sm text-gray-300"><strong className="text-cyan-300">Resultado:</strong> {task.result}</p>
+                    <p className="text-sm text-gray-300"><strong className="text-cyan-400">Resultado:</strong> {task.result}</p>
                 </div>
             )}
         </div>
@@ -98,12 +97,12 @@ const Stage4: React.FC<{ onRestart: () => void }> = ({ onRestart }) => {
                         onChange={(e) => setMission(e.target.value)}
                         placeholder="Delegue uma missão complexa... Ex: 'planeje uma viagem de 3 dias para a Chapada Diamantina com foco em trilhas'"
                         disabled={status !== 'idle'}
-                        className="flex-1 bg-gray-700/50 border border-gray-600 rounded-md px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition duration-200 disabled:opacity-50"
+                        className="flex-1 bg-gray-700/50 border border-gray-600 rounded-md px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all duration-300 disabled:opacity-50"
                     />
                     <button
                         type="submit"
                         disabled={status !== 'idle' || !mission.trim()}
-                        className="bg-cyan-600 text-white font-bold py-3 px-6 rounded-md hover:bg-cyan-500 disabled:bg-gray-600 disabled:cursor-not-allowed transition duration-200 flex items-center justify-center"
+                        className="bg-cyan-600 text-white font-bold py-3 px-6 rounded-md hover:bg-cyan-500 disabled:bg-gray-600 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center"
                     >
                          {status === 'orchestrating' || status === 'processing' ? (
                             <>
@@ -131,7 +130,7 @@ const Stage4: React.FC<{ onRestart: () => void }> = ({ onRestart }) => {
 
                     {(status === 'processing' || status === 'complete') && (
                         <div className="space-y-3">
-                            <h3 className="text-lg font-semibold text-cyan-300 mb-2">Painel de Orquestração:</h3>
+                            <h3 className="text-lg font-semibold text-cyan-400 mb-2">Painel de Orquestração:</h3>
                              <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
                                 {tasks.map((task, index) => (
                                     <SpecialistAgentCard key={index} task={task} isComplete={status === 'complete'} delay={index * 200} />
@@ -142,14 +141,14 @@ const Stage4: React.FC<{ onRestart: () => void }> = ({ onRestart }) => {
 
                     {status === 'complete' && (
                         <div className="mt-6 animate-fade-in" style={{ animationDelay: '500ms' }}>
-                            <h3 className="text-xl font-bold text-cyan-300">Relatório Final da Missão:</h3>
+                            <h3 className="text-xl font-bold text-cyan-400">Relatório Final da Missão:</h3>
                             <div className="mt-2 p-4 bg-gray-900/70 border border-gray-700 rounded-lg prose prose-invert max-w-none text-gray-300 whitespace-pre-wrap">
                                 {finalReport}
                             </div>
                             <div className="text-center mt-6">
                                 <button
                                     onClick={handleReset}
-                                    className="bg-blue-600 text-white font-bold py-2 px-8 rounded-md hover:bg-blue-500 transition duration-200"
+                                    className="bg-blue-600 text-white font-bold py-2 px-8 rounded-md hover:bg-blue-500 transition-all duration-300"
                                 >
                                     Delegar Outra Missão
                                 </button>
@@ -161,7 +160,7 @@ const Stage4: React.FC<{ onRestart: () => void }> = ({ onRestart }) => {
                      <div className="text-center mt-6">
                         <button
                             onClick={onRestart}
-                            className="text-sm text-cyan-400 hover:text-cyan-200"
+                            className="text-sm text-cyan-400 hover:text-cyan-200 transition-all duration-300"
                         >
                             &larr; Recomeçar toda a jornada
                         </button>

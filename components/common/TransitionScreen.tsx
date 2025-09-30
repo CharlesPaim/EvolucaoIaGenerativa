@@ -11,7 +11,7 @@ export const TransitionScreen: React.FC<TransitionScreenProps> = ({ title, messa
   return (
     <div className="flex flex-col items-center justify-center h-[500px] text-center animate-fade-in">
       <LoadingSpinner />
-      <h3 className="text-2xl font-bold text-cyan-300 mt-6">{title}</h3>
+      <h3 className="text-2xl font-bold text-cyan-400 mt-6">{title}</h3>
       <p className="text-gray-400 mt-2 max-w-md">{message}</p>
 
       <div className="mt-8 w-full max-w-2xl">

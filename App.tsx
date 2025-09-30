@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Header from './components/Header';
 import Stage1 from './components/Stage1';
@@ -245,7 +244,7 @@ Prompt Estruturado: "${journeyState.stage2.generatedPrompt}"`;
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col items-center p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen bg-gray-950 text-gray-100 flex flex-col items-center p-4 sm:p-6 lg:p-8">
       <div className="w-full max-w-6xl mx-auto">
         <Header 
           currentStage={currentStage} 
