@@ -10,20 +10,20 @@ interface HeaderProps {
 }
 
 const stages: StageInfo[] = [
-  { id: 'stage1', title: '1. O Início: Fazendo Perguntas', description: 'Interação direta e simples com a IA.' },
-  { id: 'stage2', title: '2. Empacotando Prompts', description: 'Estruturando instruções para tarefas complexas.' },
-  { id: 'stage3', title: '3. Materializando em Apps', description: 'Integrando a IA de forma invisível em aplicações.' },
-  { id: 'stage4', title: '4. O Futuro: Agentes', description: 'O próximo passo: IAs como agentes autônomos.' },
+  { id: 'stage1', title: '1. O Início: Fazendo Perguntas', description: 'Interação direta com a IA através de um prompt simples.' },
+  { id: 'stage2', title: '2. Empacotando Prompts', description: 'Transforme seu prompt inicial em um template reutilizável.' },
+  { id: 'stage3', title: '3. Materializando em Apps', description: 'Veja a IA gerar uma interface de app a partir do seu template.' },
+  { id: 'stage4', title: '4. O Futuro: Agentes', description: 'Recapitule a jornada e explore o futuro dos agentes.' },
 ];
 
 const Header: React.FC<HeaderProps> = ({ currentStage, setCurrentStage, unlockedStages, onRestart }) => {
   const getIcon = (stageId: Stage, isUnlocked: boolean) => {
-    if (!isUnlocked) return <LockIcon className="w-6 h-6 mr-3" />;
+    if (!isUnlocked) return <LockIcon className="w-8 h-8 mr-4 flex-shrink-0" />;
     switch (stageId) {
-      case 'stage1': return <QuestionMarkIcon className="w-6 h-6 mr-3" />;
-      case 'stage2': return <BoxIcon className="w-6 h-6 mr-3" />;
-      case 'stage3': return <AppIcon className="w-6 h-6 mr-3" />;
-      case 'stage4': return <FutureIcon className="w-6 h-6 mr-3" />;
+      case 'stage1': return <QuestionMarkIcon className="w-8 h-8 mr-4 flex-shrink-0" />;
+      case 'stage2': return <BoxIcon className="w-8 h-8 mr-4 flex-shrink-0" />;
+      case 'stage3': return <AppIcon className="w-8 h-8 mr-4 flex-shrink-0" />;
+      case 'stage4': return <FutureIcon className="w-8 h-8 mr-4 flex-shrink-0" />;
     }
   };
 
@@ -50,16 +50,19 @@ const Header: React.FC<HeaderProps> = ({ currentStage, setCurrentStage, unlocked
               key={stage.id}
               onClick={() => isUnlocked && setCurrentStage(stage.id)}
               disabled={!isUnlocked}
-              className={`w-full sm:w-auto flex-1 flex items-center justify-center text-left p-3 rounded-lg transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-75 ${
+              className={`w-full sm:w-auto flex-1 flex items-center text-left p-3 rounded-lg transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-75 ${
                 currentStage === stage.id
-                  ? 'bg-cyan-500/20 text-cyan-300 shadow-lg border border-cyan-500/50'
+                  ? 'bg-cyan-500/20 text-white shadow-lg border border-cyan-500/50'
                   : isUnlocked
                   ? 'text-gray-400 hover:bg-gray-700/50 hover:text-white'
                   : 'text-gray-600 bg-gray-800/50 cursor-not-allowed'
               }`}
             >
               {getIcon(stage.id, isUnlocked)}
-              <span className="font-semibold text-sm">{stage.title.split(':')[0]}</span>
+              <div>
+                <span className="font-semibold text-sm block leading-tight">{stage.title}</span>
+                <span className={`text-xs block font-normal leading-tight mt-1 ${currentStage === stage.id ? 'text-cyan-200' : 'text-gray-500'}`}>{stage.description}</span>
+              </div>
             </button>
           );
         })}

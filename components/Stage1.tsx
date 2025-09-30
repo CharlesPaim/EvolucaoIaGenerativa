@@ -25,18 +25,58 @@ const allPossiblePrompts = [
 
 const Stage1: React.FC<Stage1Props> = ({ state, onPromptChange, onExecute, onComplete, isLoading }) => {
     const { prompt, response, isComplete } = state;
+    const [displayedResponse, setDisplayedResponse] = useState('');
     const responseEndRef = useRef<HTMLDivElement>(null);
     const [examplePrompts, setExamplePrompts] = useState<string[]>([]);
+    const animationFrameRef = useRef<number>();
 
     useEffect(() => {
-        // Shuffle the array and pick the first 3
         const shuffled = [...allPossiblePrompts].sort(() => 0.5 - Math.random());
         setExamplePrompts(shuffled.slice(0, 3));
-    }, []); // Empty dependency array ensures this runs only once on mount
+    }, []);
+
+    useEffect(() => {
+        if (isLoading && response === '') {
+            setDisplayedResponse('');
+        }
+    }, [isLoading, response]);
+
+    useEffect(() => {
+        if (animationFrameRef.current) {
+            cancelAnimationFrame(animationFrameRef.current);
+        }
+
+        const loop = () => {
+            let shouldStop = false;
+            setDisplayedResponse(currentDisplayed => {
+                if (currentDisplayed.length >= response.length) {
+                    shouldStop = true;
+                    return currentDisplayed;
+                }
+                const nextChunk = response.substring(currentDisplayed.length, currentDisplayed.length + 1);
+                return currentDisplayed + nextChunk;
+            });
+
+            if (!shouldStop) {
+                animationFrameRef.current = requestAnimationFrame(loop);
+            }
+        };
+
+        if (displayedResponse.length < response.length) {
+            animationFrameRef.current = requestAnimationFrame(loop);
+        }
+
+        return () => {
+            if (animationFrameRef.current) {
+                cancelAnimationFrame(animationFrameRef.current);
+            }
+        };
+    }, [response, displayedResponse.length]);
+
 
     useEffect(() => {
         responseEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [response]);
+    }, [displayedResponse]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -54,8 +94,13 @@ const Stage1: React.FC<Stage1Props> = ({ state, onPromptChange, onExecute, onCom
         >
             <div className="flex flex-col h-[400px] bg-gray-800/50 border border-cyan-700/30 rounded-lg shadow-2xl shadow-cyan-900/20">
                 <div className="flex-1 p-6 overflow-y-auto custom-scrollbar">
-                    {response && (
-                        <div className="prose prose-invert max-w-none text-gray-200 whitespace-pre-wrap">{response}</div>
+                     {!isLoading && !response && (
+                        <div className="prose prose-invert max-w-none text-gray-400">
+                            <p>Olá! Sou sua IA assistente. Peça-me qualquer coisa para começar nossa jornada pela evolução da IA Generativa.</p>
+                        </div>
+                    )}
+                    {displayedResponse && (
+                        <div className="prose prose-invert max-w-none text-gray-200 whitespace-pre-wrap">{displayedResponse}</div>
                     )}
                      {isLoading && !response && (
                         <div className="flex items-center justify-center h-full">

@@ -54,6 +54,22 @@ export interface Stage3State {
     isComplete: boolean;
 }
 
+// --- Stage 4 Agent Orchestration Types ---
+export type AgentIconType = 'search' | 'logistics' | 'budget' | 'writer';
+
+export interface SpecialistTask {
+    agentName: string;
+    taskDescription: string;
+    result: string;
+    agentIcon: AgentIconType;
+}
+
+export interface OrchestrationResult {
+    tasks: SpecialistTask[];
+    finalReport: string;
+}
+
+
 // --- Overall Journey State ---
 
 export interface JourneyState {

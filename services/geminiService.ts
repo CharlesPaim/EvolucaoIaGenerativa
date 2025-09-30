@@ -1,6 +1,6 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
-import { Stage2TemplateData, Stage3AppData } from '../types';
+import { Stage2TemplateData, Stage3AppData, OrchestrationResult } from '../types';
 
 if (!process.env.API_KEY) {
     throw new Error("API_KEY environment variable not set");
@@ -95,4 +95,40 @@ Prompt Estruturado: "${prompt}"`;
     });
 
     return JSON.parse(response.text) as Stage3AppData;
+};
+
+export const orchestrateMission = async (mission: string): Promise<OrchestrationResult> => {
+    const instruction = `Você é um Agente Orquestrador de IA. Sua tarefa é receber uma missão complexa do usuário, quebrá-la em 3 a 4 subtarefas e delegá-las a agentes especialistas. Para cada subtarefa, defina o nome do agente, uma descrição da tarefa que ele está realizando, um resultado conciso que ele encontrou, e um tipo de ícone ('search', 'logistics', 'budget', 'writer') que represente a natureza da tarefa. Finalmente, compile todos os resultados em um relatório final coeso e bem escrito em primeira pessoa, como se você fosse o orquestrador apresentando a solução.
+
+Missão do Usuário: "${mission}"`;
+
+    const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: instruction,
+        config: {
+            responseMimeType: "application/json",
+            responseSchema: {
+                type: Type.OBJECT,
+                properties: {
+                    tasks: {
+                        type: Type.ARRAY,
+                        items: {
+                            type: Type.OBJECT,
+                            properties: {
+                                agentName: { type: Type.STRING, description: "Ex: 'Agente de Pesquisa'" },
+                                taskDescription: { type: Type.STRING, description: "Ex: 'Pesquisando as principais trilhas...'" },
+                                result: { type: Type.STRING, description: "Ex: 'Principais trilhas: Pai Inácio, Fumaça.'" },
+                                agentIcon: { type: Type.STRING, enum: ['search', 'logistics', 'budget', 'writer'] }
+                            },
+                            required: ["agentName", "taskDescription", "result", "agentIcon"]
+                        }
+                    },
+                    finalReport: { type: Type.STRING, description: "O relatório final consolidado." }
+                },
+                required: ["tasks", "finalReport"]
+            }
+        }
+    });
+
+    return JSON.parse(response.text) as OrchestrationResult;
 };
